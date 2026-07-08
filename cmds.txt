@@ -1,0 +1,3 @@
+docker compose to define service:
+1. our kafka producer that generates mock data:
+    >docker compose up -d --build

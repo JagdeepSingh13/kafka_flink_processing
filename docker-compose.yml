@@ -1,0 +1,9 @@
+networks:
+  bridge:
+
+services:
+  kafka-producer:
+    build:
+      context: ./kafka-producer
+    networks:
+    - bridge
