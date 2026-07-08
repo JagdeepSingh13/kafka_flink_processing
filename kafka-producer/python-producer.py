@@ -2,7 +2,7 @@ import random
 import json
 import time
 import math
-# from kafka import KafkaProducer
+from kafka import KafkaProducer
 
 
 # helpers
@@ -147,6 +147,16 @@ prev_temp = 24.0
 prev_humidity = 60.0
 prev_price = 0.12
 
+
+kafka_nodes = "broker:29092"
+topic = 'smartgrid'
+
+prod = KafkaProducer(
+    bootstrap_servers=kafka_nodes,
+    value_serializer=lambda x: json.dumps(x).encode('utf-8')
+)
+
+
 def gen_data():
     global prev_power_kw,prev_power_kw, prev_solar_kw,prev_wind_kw, prev_temp, prev_humidity, prev_price
 
@@ -224,6 +234,8 @@ def gen_data():
     }
 
     print(json.dumps(data))
+
+    prod.send(topic=topic, value=data)
 
 if __name__ == "__main__":
     while True:

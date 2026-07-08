@@ -1,3 +1,23 @@
 docker compose to define service:
+
 1. our kafka producer that generates mock data:
     >docker compose up -d --build
+
+2. in broker service: 
+    KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+    it defines how our producer will communicate 
+    broker:29092 when inside the container
+    localhost:9092 when outside to connect to kafka
+
+    >docker compose -f "docker-compose-kafka.yml" up -d --build
+    later moved to docer-compose.yml with networks
+
+    >docker compose exec -it broker bash
+        $cd opt/kafka/bin/
+        -- to start the console producer and start writing messages
+        $./kafka-console-producer.sh --bootstrap-server broker:29092 --topic test1
+        -- to view the messages
+        $./kafka-console-consumer.sh --topic test1 --from-beginning --bootstrap-server broker:29092
+
+3. the wait-for-it.sh ensures that the broker is up and running before starting the 
+    kafka-producer
