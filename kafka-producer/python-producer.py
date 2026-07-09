@@ -214,29 +214,29 @@ def gen_data():
     # "temperature_c": 26.1, "humidity_%": 74.9, 
     # "electricity_price_gbp_per_kwh": 0.091}
 
-    # data = {
-    #     "timestamp": time.time(),
-    #     "voltage_v": voltage,
-    #     "current_a": current,
-    #     "power_kw": power_kw,
-    #     "reactive_power_kvar": reactive_power,
-    #     "power_factor": pf,
-    #     "solar_kw": solar_kw,
-    #     "wind_kw": wind_kw,
-    #     "grid_in_kw": grid_in,
-    #     "grid_out_kw": grid_out,
-    #     "voltage_fluct_%": voltage_fluct,
-    #     "fault_indicator": fault,
-    #     "fault_num": fault_num,
-    #     "temperature_c": temp_c,
-    #     "humidity_%": humidity,
-    #     "electricity_price_gbp_per_kwh": price
-    # }
-
-    data  = {
-        "city": random.choice(['london', 'delhi', 'nyc']),
-        "temperature": random.uniform(80, 100)
+    data = {
+        "timestamp": time.time(),
+        "voltage_v": voltage,
+        "current_a": current,
+        "power_kw": power_kw,
+        "reactive_power_kvar": reactive_power,
+        "power_factor": pf,
+        "solar_kw": solar_kw,
+        "wind_kw": wind_kw,
+        "grid_in_kw": grid_in,
+        "grid_out_kw": grid_out,
+        "voltage_fluct_%": voltage_fluct,
+        "fault_indicator": fault,
+        "fault_num": fault_num,
+        "temperature_c": temp_c,
+        "humidity_%": humidity,
+        "electricity_price_gbp_per_kwh": price
     }
+
+    # data  = {
+    #     "city": random.choice(['london', 'delhi', 'nyc']),
+    #     "temperature": random.uniform(80, 100)
+    # }
 
     print(json.dumps(data))
 

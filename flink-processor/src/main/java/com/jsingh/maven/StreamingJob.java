@@ -26,6 +26,10 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
+
+import java.time.Duration;
 
 
 public class StreamingJob {
@@ -43,10 +47,49 @@ public class StreamingJob {
 				.setValueOnlyDeserializer(new ReadingDeserialization())
 				.build();
 
-		DataStreamSource<Reading> kafkaStream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "Kafka Source");
+//		to use the timestamp attribute for dividing data needed for windows
+//		withIdleness is needed to ignore WM from partiton which has not received any events
+		WatermarkStrategy<Reading> watermarkStrategy = WatermarkStrategy
+				.<Reading>forMonotonousTimestamps()
+				.withTimestampAssigner((event, timestamp) -> event.timestamp * 1000)
+				.withIdleness(Duration.ofSeconds(5));
 
-		kafkaStream.print();
+		DataStreamSource<Reading> readingStream = env.fromSource(source, watermarkStrategy, "Kafka Source");
+
+//		[i] filtering data
+//		DataStream<Reading> unhealthyGridEvents = readingStream.
+//				filter(StreamingJob::filterOutHealthyGridEvents);
+
+//		[ii] counting events
+//		we give 1 to all fault types and keyBy f0 is used to group by 1st arg of Tuple
+/*
+		DataStream<Tuple2<String, Integer>> counts = readingStream
+				.map(StreamingJob::countByFault)
+				.keyBy(t -> t.f0)
+				.sum(1);
+*/
+
+//		[iii] windows
+		DataStream<Tuple2<String, Integer>> windowCounts = readingStream
+				.map(StreamingJob::countByFault)
+				.keyBy(t -> t.f0)
+				.window(TumblingEventTimeWindows.of(Time.seconds(10)))
+				.sum(1);
+
+//		readingStream.print();
+//		unhealthyGridEvents.print();
+//		counts.print();
+		windowCounts.print();
 
 		env.execute("testing flink");
 	}
+
+	private static boolean filterOutHealthyGridEvents(Reading r) {
+		return !r.fault_indicator.equals("normal");
+	}
+
+	public static Tuple2<String, Integer> countByFault(Reading r) {
+		return Tuple2.of(r.fault_indicator, 1);
+	}
+
 }
