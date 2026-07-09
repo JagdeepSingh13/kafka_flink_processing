@@ -21,3 +21,8 @@ docker compose to define service:
 
 3. the wait-for-it.sh ensures that the broker is up and running before starting the 
     kafka-producer
+
+flink installation: 
+    >mvn archetype:generate -DarchetypeGroupId=org.apache.flink -DarchetypeArtifactId=flink-quickstart-java -DarchetypeVersion=1.14.4
+
+    
