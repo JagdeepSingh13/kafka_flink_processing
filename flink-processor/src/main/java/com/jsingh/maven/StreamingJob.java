@@ -27,18 +27,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 
-/**
- * Skeleton for a Flink Streaming Job.
- *
- * <p>For a tutorial how to write a Flink streaming application, check the
- * tutorials and examples on the <a href="https://flink.apache.org/docs/stable/">Flink Website</a>.
- *
- * <p>To package your application into a JAR file for execution, run
- * 'mvn clean package' on the command line.
- *
- * <p>If you change the name of the main class (with the public static void main(String[] args))
- * method, change the respective entry in the POM.xml file (simply search for 'mainClass').
- */
+
 public class StreamingJob {
 
 	public static void main(String[] args) throws Exception {
@@ -46,15 +35,15 @@ public class StreamingJob {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		env.getConfig().disableClosureCleaner();
 
-		KafkaSource<String> source = KafkaSource.<String>builder()
+		KafkaSource<Reading> source = KafkaSource.<Reading>builder()
 				.setBootstrapServers("localhost:9092")
 				.setTopics("smartgrid")
 				.setGroupId("my-group")
 				.setStartingOffsets(OffsetsInitializer.earliest())
-				.setValueOnlyDeserializer(new SimpleStringSchema())
+				.setValueOnlyDeserializer(new ReadingDeserialization())
 				.build();
 
-		DataStreamSource<String> kafkaStream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "Kafka Source");
+		DataStreamSource<Reading> kafkaStream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "Kafka Source");
 
 		kafkaStream.print();
 
