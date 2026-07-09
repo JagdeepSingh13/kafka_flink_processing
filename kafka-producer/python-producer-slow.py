@@ -4,8 +4,6 @@ import time
 import math
 from kafka import KafkaProducer
 
-sim_time = time.time()
-
 
 # helpers
 def compute_fault(current, power_kw, voltage_fluct, prev_power_kw):
@@ -215,11 +213,9 @@ def gen_data():
     # "voltage_fluct_%": 0.85, "fault_indicator": 0, 
     # "temperature_c": 26.1, "humidity_%": 74.9, 
     # "electricity_price_gbp_per_kwh": 0.091}
-    global sim_time
-    sim_time += 5
 
     data = {
-        "timestamp": sim_time,
+        "timestamp": time.time(),
         "voltage_v": voltage,
         "current_a": current,
         "power_kw": power_kw,
@@ -250,5 +246,5 @@ def gen_data():
 if __name__ == "__main__":
     while True:
         gen_data()
-        time.sleep(0.1)
+        time.sleep(5)
      

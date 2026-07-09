@@ -70,16 +70,26 @@ public class StreamingJob {
 */
 
 //		[iii] windows
+/*
 		DataStream<Tuple2<String, Integer>> windowCounts = readingStream
 				.map(StreamingJob::countByFault)
 				.keyBy(t -> t.f0)
 				.window(TumblingEventTimeWindows.of(Time.seconds(10)))
 				.sum(1);
+*/
+
+//		[iv] half-hourly average values
+//		inc/dec window size depending on generation rate
+		DataStream<Double> avgWind = readingStream
+				.windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
+				.aggregate(new WindAccumulator())
+				;
 
 //		readingStream.print();
 //		unhealthyGridEvents.print();
 //		counts.print();
-		windowCounts.print();
+//		windowCounts.print();
+		avgWind.print();
 
 		env.execute("testing flink");
 	}
