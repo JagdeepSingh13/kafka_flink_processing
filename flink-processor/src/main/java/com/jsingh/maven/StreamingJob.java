@@ -22,7 +22,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
@@ -78,18 +77,28 @@ public class StreamingJob {
 				.sum(1);
 */
 
-//		[iv] half-hourly average values
+//		[iv] half-hourly average values -> of 1 attribute
 //		inc/dec window size depending on generation rate
+/*
 		DataStream<Double> avgWind = readingStream
 				.windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
 				.aggregate(new WindAccumulator())
+				;
+*/
+
+//		[v] half-hourly averages of multiple attributes
+//		part 2 of this is ProcessWindowFunction -> gives and lets us use context of window
+		DataStream<HalfHourAverages> averages = readingStream
+				.windowAll(TumblingEventTimeWindows.of(Time.minutes(30)))
+				.aggregate(new Accumulator(), new MyProcessWindowFunction())
 				;
 
 //		readingStream.print();
 //		unhealthyGridEvents.print();
 //		counts.print();
 //		windowCounts.print();
-		avgWind.print();
+//		avgWind.print();
+		averages.print();
 
 		env.execute("testing flink");
 	}

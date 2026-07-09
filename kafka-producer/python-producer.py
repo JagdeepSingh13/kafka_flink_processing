@@ -54,19 +54,20 @@ def generate_voltage():
 
 
 def solar_output(prev_solar):
-    hour = time.localtime().tm_hour
+    # hour = time.localtime().tm_hour
 
     # Daylight curve (0 at night, 1 at noon)
-    daylight = max(0, math.cos((hour - 12) * math.pi / 12))
+    # daylight = max(0, math.cos((hour - 12) * math.pi / 12))
 
-    # Cloud cover with persistence
-    cloud = random.uniform(0.5, 1.0)
+    # # Cloud cover with persistence
+    # cloud = random.uniform(0.5, 1.0)
 
-    base = MAX_SOLAR * daylight * cloud
+    # base = MAX_SOLAR * daylight * cloud
 
-    # Faster ramp-up/down
-    solar_kw = 0.6 * prev_solar + 0.4 * base
+    # # Faster ramp-up/down
+    # solar_kw = 0.6 * prev_solar + 0.4 * base
 
+    solar_kw = round(random.uniform(25, MAX_SOLAR-10.0), 2)
     return round(max(0, min(solar_kw, MAX_SOLAR)), 2)
 
 
@@ -143,7 +144,7 @@ MAX_WIND = 200         # kW
 
 # initial states
 prev_power_kw = None
-prev_solar_kw = 0.0
+prev_solar_kw = MAX_SOLAR * 0.4
 prev_wind_kw = MAX_WIND * 0.5
 prev_temp = 24.0
 prev_humidity = 60.0
