@@ -24,5 +24,8 @@ docker compose to define service:
 
 flink installation: 
     >mvn archetype:generate -DarchetypeGroupId=org.apache.flink -DarchetypeArtifactId=flink-quickstart-java -DarchetypeVersion=1.14.4
+    ...make changes to version types and add kafka dependency in pom.xml...
 
-    
+4. postgres:
+    enter interactive terminal
+    >docker compose exec -it postgres psql -U postgres
